@@ -12,13 +12,13 @@ function Filme(){
     const {id} = useParams();
     const navigate = useNavigate();
     const [filme, setFilme] = useState({});
-    const [loading,setLoading] = useState({});
+    const [loading,setLoading] = useState(true);
 
     useEffect(()=>{
         async function loadFilme(){
+            setLoading(true);
             await api.get(`/movie/${id}`,{
                 params:{
-                    api_key:"479f7b4b395919038e96907a929948ec",
                     language:"pt-br",
                 }
             })
@@ -77,7 +77,7 @@ function Filme(){
             <div className="area-buttons">
                 <button onClick={salvarFilme}>Salvar</button>
                 <button>
-                    <a target="blank" rel="external" href={`https://youtube.com/results?search_query=${filme.title} trailer`}>
+                    <a target="_blank" rel="noopener noreferrer" href={`https://youtube.com/results?search_query=${filme.title} trailer`}>
                         Trailer
                     </a>
                 </button>

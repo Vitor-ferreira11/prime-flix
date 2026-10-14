@@ -1,10 +1,8 @@
-import axios from "axios";
-
-// base da url: https://api.themoviedb.org/3/
-// url da api: /movie/now_playing?api_key=479f7b4b395919038e96907a929948ec&language=pt-BR
-
+import axios from 'axios';
+// Credenciais confidenciais exigem backend: a chave no navegador continua pública.
 const api = axios.create({
-    baseURL: 'https://api.themoviedb.org/3/'
+    baseURL: 'https://api.themoviedb.org/3/',
+    timeout: 15000,
+    params: { api_key: process.env.REACT_APP_TMDB_API_KEY, language: 'pt-BR' }
 });
-
 export default api;

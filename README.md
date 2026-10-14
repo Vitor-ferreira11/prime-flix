@@ -68,3 +68,7 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+## Configuração da API
+
+Copie `.env.example` para `.env.local`, configure `REACT_APP_TMDB_API_KEY` com sua chave do TMDB e reinicie o servidor. A chave anteriormente versionada deve ser revogada e substituída na conta TMDB. Variáveis de ambiente de frontend não tornam a chave secreta: para credenciais confidenciais, use um backend. A aplicação depende da rede e da disponibilidade do TMDB.
