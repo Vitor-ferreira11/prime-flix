@@ -1,17 +1,18 @@
+import { vi } from 'vitest';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import Filme from './index';
 import api from '../../services/api';
 import { toast } from 'react-toastify';
 
 let mockParams = { id: '1' };
-const mockNavigate = jest.fn();
-jest.mock('../../services/api', () => ({ get: jest.fn() }));
-jest.mock('react-router-dom', () => ({
+const mockNavigate = vi.fn();
+vi.mock('../../services/api', () => ({ default: { get: vi.fn() } }));
+vi.mock('react-router-dom', () => ({
     useParams: () => mockParams,
     useNavigate: () => mockNavigate
 }));
-jest.mock('react-toastify', () => ({ toast: { error: jest.fn(), warn: jest.fn(), success: jest.fn() } }));
-afterEach(() => { jest.restoreAllMocks(); localStorage.clear(); });
+vi.mock('react-toastify', () => ({ toast: { error: vi.fn(), warn: vi.fn(), success: vi.fn() } }));
+afterEach(() => { vi.restoreAllMocks(); localStorage.clear(); });
 
 test('troca de filme cancela a chamada anterior e ignora resposta atrasada', async () => {
     mockParams = { id: '1' };
@@ -35,7 +36,7 @@ test('falha de armazenamento mostra erro e não anuncia sucesso', async () => {
     api.get.mockResolvedValueOnce({ data: { id: 1, title: 'Filme', backdrop_path: '/filme.jpg' } });
     render(<Filme />);
     await screen.findByRole('heading', { name: 'Filme' });
-    jest.spyOn(Storage.prototype, 'setItem').mockImplementation(() => { throw new Error('bloqueado'); });
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => { throw new Error('bloqueado'); });
     fireEvent.click(screen.getByRole('button', { name: 'Salvar' }));
     expect(toast.error).toHaveBeenCalled();
     expect(toast.success).not.toHaveBeenCalled();

@@ -1,10 +1,11 @@
+import { vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import Home from './index';
 import api from '../../services/api';
 
-jest.mock('../../services/api', () => ({ get: jest.fn() }));
+vi.mock('../../services/api', () => ({ default: { get: vi.fn() } }));
 // Testes da Home isolam o roteador; navegação real deve ter teste de integração.
-jest.mock('react-router-dom', () => ({
+vi.mock('react-router-dom', () => ({
     Link: ({ to, children }) => <a href={to}>{children}</a>
 }));
 

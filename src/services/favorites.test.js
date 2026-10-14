@@ -1,6 +1,7 @@
+import { vi } from 'vitest';
 import { lerFilmesSalvos, gravarFilmesSalvos } from './favorites';
 
-afterEach(() => { jest.restoreAllMocks(); localStorage.clear(); });
+afterEach(() => { vi.restoreAllMocks(); localStorage.clear(); });
 
 test('mantém filmes válidos e rejeita JSON ou formatos inválidos', () => {
     for (const dados of ['{', '{}', 'null', '123']) {
@@ -12,9 +13,9 @@ test('mantém filmes válidos e rejeita JSON ou formatos inválidos', () => {
 });
 
 test('tolera bloqueio ao ler e sinaliza falha ao gravar', () => {
-    jest.spyOn(Storage.prototype, 'getItem').mockImplementation(() => { throw new Error('bloqueado'); });
+    vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => { throw new Error('bloqueado'); });
     expect(lerFilmesSalvos()).toEqual([]);
-    jest.spyOn(Storage.prototype, 'setItem').mockImplementation(() => { throw new Error('sem espaço'); });
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => { throw new Error('sem espaço'); });
     expect(gravarFilmesSalvos([{ id: 1, title: 'Filme' }])).toBe(false);
 });
 
