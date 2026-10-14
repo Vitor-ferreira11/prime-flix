@@ -10,10 +10,12 @@ function Home(){
     const [error, setError] = useState(false);
 
     useEffect(()=>{
+        const controller = new AbortController();
 
         async function loadFilmes(){
             try {
             const response = await api.get('movie/now_playing', {
+                signal: controller.signal,
                 params:{
                     language:"pt-br",
                     page: 1,
@@ -21,15 +23,16 @@ function Home(){
             })
 
             //console.log(response.data.results.slice(0,10));
-            setFilmes(response.data.results.slice(0,10))
+            if (!controller.signal.aborted) setFilmes(response.data.results.slice(0,10))
             } catch {
-                setError(true);
+                if (!controller.signal.aborted) setError(true);
             } finally {
-                setLoading(false);
+                if (!controller.signal.aborted) setLoading(false);
             }
         }
 
         loadFilmes();
+        return () => controller.abort();
 
     }, [])
 
