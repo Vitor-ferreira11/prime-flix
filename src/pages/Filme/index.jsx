@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import './filme-info.css';
 
 import api from "../../services/api";
+import { lerFilmesSalvos, gravarFilmesSalvos } from '../../services/favorites';
 
 import {toast} from 'react-toastify'
 
@@ -12,22 +13,25 @@ function Filme(){
     const {id} = useParams();
     const navigate = useNavigate();
     const [filme, setFilme] = useState({});
-    const [loading,setLoading] = useState({});
+    const [loading,setLoading] = useState(true);
 
     useEffect(()=>{
+        const controller = new AbortController();
         async function loadFilme(){
+            setLoading(true);
             await api.get(`/movie/${id}`,{
+                signal: controller.signal,
                 params:{
-                    api_key:"479f7b4b395919038e96907a929948ec",
                     language:"pt-br",
                 }
             })
             .then((response)=>{
+                if (controller.signal.aborted) return;
                 setFilme(response.data);
                 setLoading(false);
             })
             .catch(()=>{
-                console.log("FILME NAO ENCONTRADO");
+                if (controller.signal.aborted) return;
                 navigate("/", {replace: true})
                 return;
             })
@@ -36,13 +40,12 @@ function Filme(){
         loadFilme();
 
         return() => {
-            console.log("COMPONENTE FOI DEMOSTANDO")
+            controller.abort();
         }
     },[navigate, id])
 
     function salvarFilme(){
-        const minhaLista = localStorage.getItem("@primeflix");
-        let filmesSalvos= JSON.parse(minhaLista) || [];
+        const filmesSalvos = lerFilmesSalvos();
         const hasFilme = filmesSalvos.some((filmeSalvo)=> filmeSalvo.id=== filme.id);
 
         if(hasFilme){
@@ -51,7 +54,10 @@ function Filme(){
         }
 
         filmesSalvos.push(filme);
-        localStorage.setItem("@primeflix", JSON.stringify(filmesSalvos));
+        if (!gravarFilmesSalvos(filmesSalvos)) {
+            toast.error('Não foi possível salvar o filme neste navegador.');
+            return;
+        }
         toast.success("FILME SALVO COM SUCESSO!");
 
 
@@ -72,15 +78,13 @@ function Filme(){
 
             <h3>Sinopse</h3>
             <span>{filme.overview}</span>
-            <strong>Avalição: {filme.vote_average} / 10</strong>
+            <strong>Avaliação: {filme.vote_average} / 10</strong>
 
             <div className="area-buttons">
                 <button onClick={salvarFilme}>Salvar</button>
-                <button>
-                    <a target="blank" rel="external" href={`https://youtube.com/results?search_query=${filme.title} trailer`}>
-                        Trailer
-                    </a>
-                </button>
+                <a className="trailer-link" target="_blank" rel="noopener noreferrer" href={`https://www.youtube.com/results?search_query=${encodeURIComponent(filme.title + ' trailer')}`}>
+                    Trailer
+                </a>
             </div>
 
 

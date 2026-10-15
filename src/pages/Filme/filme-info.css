@@ -27,7 +27,8 @@
     margin: 8px 0;
 }
 
-.area-buttons button{
+.area-buttons button, .area-buttons .trailer-link{
+    display: inline-block;
     margin-right: 12px;
     margin-top: 14px;
     margin-left: 0;
@@ -39,9 +40,14 @@
     transition: all 0.5s;
 }
 
-.area-buttons button:hover{
+.area-buttons button:hover, .area-buttons .trailer-link:hover{
     background-color: brown;
     color: #ffffff;
+}
+
+.area-buttons button:focus-visible, .area-buttons a:focus-visible {
+    outline: 3px solid #075f9b;
+    outline-offset: 3px;
 }
 
 .area-buttons a{

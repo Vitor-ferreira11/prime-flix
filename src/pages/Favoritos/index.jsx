@@ -2,13 +2,13 @@ import { useEffect, useState } from 'react'
 import './favoritos.css'
 import { Link } from 'react-router-dom'
 import {toast} from 'react-toastify'
+import { lerFilmesSalvos, gravarFilmesSalvos } from '../../services/favorites';
 
 function Favoritos(){
     const [filmes, setFilmes] = useState([])
 
     useEffect(()=>{
-        const minhaLista = localStorage.getItem("@primeflix");
-        setFilmes(JSON.parse(minhaLista) || [])
+        setFilmes(lerFilmesSalvos())
     }, [])
 
     function excluirFilme(id){
@@ -16,8 +16,11 @@ function Favoritos(){
             return(item.id !== id)
         })
     
+        if (!gravarFilmesSalvos(filtroFilmes)) {
+            toast.error('Não foi possível atualizar seus favoritos neste navegador.');
+            return;
+        }
         setFilmes(filtroFilmes);
-        localStorage.setItem("@primeflix", JSON.stringify(filtroFilmes) )
         toast.success("Filme removido com sucesso")
     }
 

@@ -1,70 +1,41 @@
-# Getting Started with Create React App
+# Prime Flix
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Projeto educacional em React que consulta filmes do TMDB, mostra detalhes e permite salvar favoritos no navegador. Inclui rotas de catálogo, detalhes, favoritos e página não encontrada.
 
-## Available Scripts
+## Configuração e execução
 
-In the project directory, you can run:
+Use Node.js 22.22.2 ou superior da linha 22, ou Node.js 24.15 ou superior da linha 24, e npm. Na raiz:
 
-### `npm start`
+```
+npm ci
+```
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Copie `.env.example` para `.env.local`, preencha `VITE_TMDB_API_KEY` com sua chave TMDB e execute `npm start`. Reinicie o servidor ao mudar a configuração. O catálogo depende da internet e da disponibilidade do TMDB.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+A chave anteriormente versionada deve ser revogada e substituída na conta TMDB. Variáveis de ambiente de frontend continuam visíveis no bundle; credenciais confidenciais exigem backend.
 
-### `npm test`
+## Verificação
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```
+npm test
+npm run build
+```
 
-### `npm run build`
+Oito testes cobrem sucesso/falha da Home, favoritos com dados inválidos ou armazenamento bloqueado, gravação/leitura e respostas atrasadas na troca de filme. A API é simulada; um teste usa o roteador real para navegar entre favoritos, detalhes e catálogo. A integração com o TMDB real não é validada. O GitHub executa testes e build em PRs e mudanças em main.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Estrutura
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- `src/pages`: catálogo, detalhes, favoritos e página de erro.
+- `src/services/api.js`: cliente TMDB com timeout e configuração centralizada.
+- `src/services/favorites.js`: leitura e gravação tolerantes a falhas.
+- `src/routes.jsx`: rotas da aplicação.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Limitações
 
-### `npm run eject`
+Favoritos usam a chave `@primeflix` no localStorage: pertencem ao navegador e não são sincronizados com contas. Dados inválidos são ignorados na leitura; falhas ao gravar são comunicadas ao usuário. Requisições são canceladas ao sair da página ou trocar de filme, e respostas antigas não substituem o filme atual.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Vite gera a pasta `dist`. O build usa roteamento de aplicação de página única. A hospedagem precisa direcionar rotas como `/filme/42` e `/favoritos` ao `index.html`. A validação local e a verificação automática usam `npm ci` com o novo `package-lock.json`.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Migração de ferramentas
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Create React App e Jest foram substituídos por Vite e Vitest. Os componentes JSX usam a extensão `.jsx`; as páginas, rotas e estilos foram preservados. `npm start` continua iniciando o servidor de desenvolvimento. Se você já configurou uma variável `REACT_APP_TMDB_API_KEY`, renomeie-a para `VITE_TMDB_API_KEY` e reinicie o servidor.

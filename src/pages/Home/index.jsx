@@ -3,33 +3,41 @@ import api from '../../services/api';
 import {Link} from 'react-router-dom'
 import './home.css';
 
-// url da api: /movie/now_playing?api_key=479f7b4b395919038e96907a929948ec&language=pt-BR
 
 function Home(){
     const [filmes, setFilmes ] = useState([]); 
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(false);
 
     useEffect(()=>{
+        const controller = new AbortController();
 
         async function loadFilmes(){
+            try {
             const response = await api.get('movie/now_playing', {
+                signal: controller.signal,
                 params:{
-                    api_key:"479f7b4b395919038e96907a929948ec",
                     language:"pt-br",
                     page: 1,
                 }
             })
 
             //console.log(response.data.results.slice(0,10));
-            setFilmes(response.data.results.slice(0,10))
-            setLoading(false);
+            if (!controller.signal.aborted) setFilmes(response.data.results.slice(0,10))
+            } catch {
+                if (!controller.signal.aborted) setError(true);
+            } finally {
+                if (!controller.signal.aborted) setLoading(false);
+            }
         }
 
         loadFilmes();
+        return () => controller.abort();
 
     }, [])
 
 
+    if(error) return <p role="alert">Não foi possível carregar os filmes. Verifique a conexão e a configuração da API e recarregue a página.</p>;
     if(loading){
        return(
          <div className="loading">
